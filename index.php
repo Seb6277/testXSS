@@ -5,12 +5,7 @@
 
     try {
         $pdo = new PDO("mysql:host=localhost;dbname=testXSS", 'root', 'admin');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $request = $pdo->prepare("INSERT INTO test_user (username, password, text) VALUES (:mail ,:password, :text)");
-        $request->bindParam(':mail', $mail);
-        $request->bindParam(':password', $password);
-        $request->bindParam(':text', $text);
-        $request->execute();
+        $pdo->exec("INSERT INTO test_user (username, password, text) VALUES ('$mail' ,'$password', '$text')");
     } catch (PDOException $err) {
         print($err);
     }
