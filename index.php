@@ -1,15 +1,20 @@
-<?php if (isset($_POST['mail']) && isset($_POST['password']) && isset($_POST['presentation'])) {
+<?php 
+try{
+    $pdo = new PDO("mysql:host=localhost;dbname=testXSS", 'root', 'admin');
+} catch (PDOException $err) {
+    print($err);
+}
+
+$data = $pdo->query("SELECT * from test_user");
+
+if (isset($_POST['mail']) && isset($_POST['password']) && isset($_POST['presentation'])) {
     $mail = $_POST['mail'];
     $password = $_POST['password'];
     $text = $_POST['presentation'];
 
-    try {
-        $pdo = new PDO("mysql:host=localhost;dbname=testXSS", 'root', 'admin');
-        $pdo->exec("INSERT INTO test_user (username, password, text) VALUES ('$mail' ,'$password', '$text')");
-    } catch (PDOException $err) {
-        print($err);
-    }
+    $pdo->exec("INSERT INTO test_user (username, password, text) VALUES ('$mail' ,'$password', '$text')");
 }?>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,6 +41,13 @@
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top: 20px">Submit</button>
         </form>
+    </div>
+    <div class="container">
+        <?php while($fetchedData = $data->fetch())
+        {
+            ?><div class="row"><?php echo($fetchedData['username'] . '  |  ' . $fetchedData['text']) ?></div>
+        <?php }
+        $data->closeCusor() ?>
     </div>
 
 
